@@ -169,7 +169,7 @@ public class SearchConfession extends javax.swing.JFrame {
         GetDate(modelDate);
         GetDate_Time(modelDate_Time);
        
-        
+    }   
     private void filterKeyword(String query){
         TableRowSorter <DefaultTableModel> sorter = new TableRowSorter<>((DefaultTableModel) jTableKeywords.getModel());
         sorter.setRowFilter(RowFilter.regexFilter("(?i).*\\Q" + query + "\\E.*"));
