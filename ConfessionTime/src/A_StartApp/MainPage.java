@@ -1,7 +1,8 @@
 
 package A_StartApp;
 import B_PostPage.NewConfessionPost;
-import B_SearchPost.SearchConfession;
+import B_SearchPost.SearchMenu;
+import B_ViewPost.MainPost;
 
 public class MainPage extends javax.swing.JFrame {
 
@@ -43,6 +44,11 @@ public class MainPage extends javax.swing.JFrame {
         });
 
         btnView.setText("View Confession");
+        btnView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnViewActionPerformed(evt);
+            }
+        });
 
         btnSearch.setText("Search for Confession Post");
         btnSearch.addActionListener(new java.awt.event.ActionListener() {
@@ -102,11 +108,16 @@ public class MainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLogOutActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        // TODO add your handling code here:
         dispose();
-        SearchConfession searchConfession = new SearchConfession(userId);
-        searchConfession.setVisible(true);
+        SearchMenu searchMenu = new SearchMenu(userId);
+        searchMenu.setVisible(true);
     }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
+        dispose();
+        MainPost mainPost = new MainPost(userId);
+        mainPost.setVisible(true);
+    }//GEN-LAST:event_btnViewActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

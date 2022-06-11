@@ -2,7 +2,7 @@
 package B_PostPage;
 
 import A_StartApp.MainPage;
-import Utilitities.ConnectDB;
+import Utilities.ConnectDB;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

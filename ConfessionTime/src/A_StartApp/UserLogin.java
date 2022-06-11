@@ -1,7 +1,7 @@
 
 package A_StartApp;
 
-import Utilitities.ConnectDB;
+import Utilities.ConnectDB;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;

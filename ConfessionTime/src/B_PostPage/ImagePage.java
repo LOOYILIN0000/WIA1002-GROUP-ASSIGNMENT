@@ -1,7 +1,7 @@
 
 package B_PostPage;
 
-import Utilitities.ConnectDB;
+import Utilities.ConnectDB;
 import java.awt.Image;
 import java.io.File;
 import java.sql.ResultSet;
