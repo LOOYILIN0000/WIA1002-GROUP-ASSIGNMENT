@@ -10,9 +10,9 @@ import javax.swing.JOptionPane;
 
 public class UserLogin extends javax.swing.JFrame {
 
-    ConnectDB connDB;
-    Statement stmt;
-    ResultSet rs;
+    private ConnectDB connDB;
+    private Statement stmt;
+    private ResultSet rs;
         
     public UserLogin() {
         initComponents();

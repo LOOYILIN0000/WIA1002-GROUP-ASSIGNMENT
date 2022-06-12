@@ -17,9 +17,8 @@ public class OriginalPost extends javax.swing.JFrame {
     private String timePosted;
     private ImageIcon format = null;
   
-    ConnectDB connDB;
-    Statement stmt;
-    ResultSet rs;
+    private Statement stmt;
+    private ResultSet rs;
 
     public OriginalPost() {
         initComponents();
@@ -30,10 +29,9 @@ public class OriginalPost extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null); 
         this.postId = postId;
-        getAllPosts();    
     }
     
-    private void getAllPosts(){
+    protected boolean getAllPosts(){
         
         //retrieve data from the whole POSTS DATABASE
         String SQL = "SELECT * FROM POSTS WHERE ID = "+postId+"";
@@ -61,10 +59,14 @@ public class OriginalPost extends javax.swing.JFrame {
                Time.setText(timePosted);
                txtImage.setIcon(image);
                
+            } else {
+                JOptionPane.showMessageDialog(this, "This post is not replying to any post!");
+                return false;
             }
         }catch(SQLException err){
             JOptionPane.showMessageDialog(this, err.getMessage());
         }
+        return true;
     }
     
     // Load image in database

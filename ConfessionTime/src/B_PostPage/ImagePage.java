@@ -12,9 +12,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class ImagePage extends javax.swing.JFrame {
 
-    ConnectDB connDB;
-    Statement stmt;
-    ResultSet rs;
+    private Statement stmt;
+    private ResultSet rs;
     private int userId;
     private File thefile =null;
     public static String path =null;
@@ -27,10 +26,6 @@ public class ImagePage extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         this.userId = userId;
-        
-        //connecting to database
-        connDB = new ConnectDB();
-        connDB.DoConnect();
     }
     
     @SuppressWarnings("unchecked")

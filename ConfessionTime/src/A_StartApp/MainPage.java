@@ -116,7 +116,7 @@ public class MainPage extends javax.swing.JFrame {
     private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
         dispose();
         MainPost mainPost = new MainPost(userId);
-        mainPost.setVisible(true);
+        mainPost.setVisible(mainPost.getAllPosts());
     }//GEN-LAST:event_btnViewActionPerformed
 
     public static void main(String args[]) {

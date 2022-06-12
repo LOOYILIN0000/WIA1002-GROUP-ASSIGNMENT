@@ -2,6 +2,8 @@
 package B_PostPage;
 
 import A_StartApp.MainPage;
+import B_AdminPanel.SpamChecker;
+import B_AdminPanel.WaitingList;
 import Utilities.ConnectDB;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,13 +15,14 @@ import java.sql.Statement;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class NewConfessionPost extends javax.swing.JFrame {
     
-    ConnectDB connDB;
-    Statement stmt;
-    ResultSet rs;
+    private Statement stmt;
+    private ResultSet rs;
     private int userId;
     private int newPostId;
     
@@ -31,10 +34,6 @@ public class NewConfessionPost extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         this.userId = userId;
-        
-        //Connecting to database
-        connDB = new ConnectDB();
-        connDB.DoConnect();
     }
 
     
@@ -183,42 +182,60 @@ public class NewConfessionPost extends javax.swing.JFrame {
             if( rs.next() || (rs.next() == false && uPostId.equalsIgnoreCase("")) ){
                 // Content is mandatory to be filled 
                 if(!content.equalsIgnoreCase("")){
-                   if(content.endsWith("-1")){
-                    content = content.substring(0, content.length()-2);
-                    String SQL_INSERT = "INSERT INTO POSTS (PostedById, ReplyPostId, DatePosted, TimePosted, Content) VALUES ("+userId+","+postId+", '"+date+"', '"+time+"', '"+content+"')";
-                    int rows = stmt.executeUpdate(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
-                    if(rows>0){
-                        System.out.println("New post has been added!");
-                    } 
-                    rs = stmt.getGeneratedKeys();
-                    if(rs.next()){
-                        newPostId = rs.getInt(1);
-                        updateImageBlob(newPostId);
-                        dispose();
+                    if(content.endsWith("-1")){
+                     content = content.substring(0, content.length()-2);
 
-                        // Confession post ID and the submission date and time
-                        JOptionPane.showMessageDialog(null, "Submitted at " + date + " " + time
-                                                                 + ".\nConfession post ID: " + newPostId
-                                                                 + ".\nYour confession will be publilshed soon.");                
-                    }
-                    stmt.close();    
-                    MainPage mainPage = new MainPage(userId);
-                    mainPage.setVisible(true);
+                    // Check if content contains offensive word or is a spam 
+                    SpamChecker spamChecker = new SpamChecker(content);
+                        
+                        if (spamChecker.checkContent(content)){
+
+                            // content is stored in temporary database
+                            String SQL_INSERT = "INSERT INTO PENDING_POSTS (PostedById, ReplyPostId, DatePosted, TimePosted, Content) VALUES ("+userId+","+postId+", '"+date+"', '"+time+"', '"+content+"')";
+                            int rows = stmt.executeUpdate(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
+                            if(rows>0){
+                                System.out.println("New post has been added into pending_post table!");
+                            } 
+                            rs = stmt.getGeneratedKeys();
+                            if(rs.next()){
+                                newPostId = rs.getInt(1);
+                                updateImageBlob(newPostId);
+                                dispose();
+
+                                // Confession post ID and the submission date and time
+                                JOptionPane.showMessageDialog(null, "Submitted at " + date + " " + time
+                                                                         + ".\nConfession post ID: " + newPostId
+                                                                         + ".\nYour confession will be publilshed soon.");                
+                            }
+                            stmt.close();    
+                            MainPage mainPage = new MainPage(userId);
+                            mainPage.setVisible(true);
+
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Your content is considered spam or sensitive!");                
+                        }
+
                     } else {
                         JOptionPane.showMessageDialog(null, "End your post with -1 to submit your confession.");                
                     } 
                 } else {
                     JOptionPane.showMessageDialog(null, "Content field cannot be left blank.");                
                 }
-                
                
             } else{
                 JOptionPane.showMessageDialog(null, "Reply confession post ID does not exists.");                
-            }
+            }            
             
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
+        try {
+            WaitingList waitingList = new WaitingList();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(NewConfessionPost.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed

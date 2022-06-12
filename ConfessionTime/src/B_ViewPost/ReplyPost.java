@@ -18,9 +18,8 @@ public class ReplyPost extends javax.swing.JFrame {
     private String timePosted;
     private ImageIcon format = null;
    
-    ConnectDB connDB;
-    Statement stmt;
-    ResultSet rs;
+    private Statement stmt;
+    private ResultSet rs;
     
     public ReplyPost() {
         initComponents();
@@ -31,10 +30,9 @@ public class ReplyPost extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         this.replypostId = replypostId;
-        getAllPosts();  
     }
     
-    private void getAllPosts(){
+    protected boolean getAllPosts(){
         
         //retrieve data from the whole POSTS DATABASE
         String SQL = "SELECT * FROM POSTS WHERE REPLYPOSTID = "+replypostId+"";
@@ -61,10 +59,16 @@ public class ReplyPost extends javax.swing.JFrame {
                Time.setText(timePosted);
                txtImage.setIcon(image);
                
+            } else {
+                JOptionPane.showMessageDialog(this, "This post has no reply post!");
+                return false;
             }
         }catch(SQLException err){
             JOptionPane.showMessageDialog(this, err.getMessage());
         }
+        
+        // return true if there is reply posts
+        return true;
     }
     
     // Load image in database

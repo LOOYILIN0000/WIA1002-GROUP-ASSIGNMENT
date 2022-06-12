@@ -19,9 +19,9 @@ public class MainPost extends javax.swing.JFrame {
     private int postId;
     private int replyId;
     private int specificPostId = -1;
-    ConnectDB connDB;
-    Statement stmt;
-    ResultSet rs;
+
+    private Statement stmt;
+    private ResultSet rs;
     
     public MainPost() {
         initComponents();
@@ -32,7 +32,6 @@ public class MainPost extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null); 
         this.userId = userId;
-        getAllPosts();
     }
     
     public MainPost(int userId, int specificPostId){     // to open certain post page
@@ -40,10 +39,9 @@ public class MainPost extends javax.swing.JFrame {
         setLocationRelativeTo(null); 
         this.userId = userId;
         this.specificPostId = specificPostId;
-        getAllPosts();
     }
     
-    private void getAllPosts(){
+    public boolean getAllPosts(){
         
         //retrieve data from the whole POSTS DATABASE
         String SQL = "SELECT * FROM POSTS ORDER BY DATEPOSTED DESC";
@@ -54,7 +52,7 @@ public class MainPost extends javax.swing.JFrame {
             stmt = ConnectDB.conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
             rs = stmt.executeQuery(SQL);
             
-            if(rs.next() && specificPostId != -1) {
+            if(specificPostId != -1) {
                 while(rs.next()){
                     if(rs.getInt("ID") == specificPostId){
                         postId = specificPostId;
@@ -75,7 +73,7 @@ public class MainPost extends javax.swing.JFrame {
                         break;
                     }
                 }
-                
+                return true;
             }else if(rs.next()){
                 
                postId = rs.getInt("ID");
@@ -92,15 +90,17 @@ public class MainPost extends javax.swing.JFrame {
                Date.setText(datePosted);
                Time.setText(timePosted);
                txtImage.setIcon(image);
-               
+               return true;
             }
             else{
-                rs.previous();
-                JOptionPane.showMessageDialog(this, "End of File!");
+                JOptionPane.showMessageDialog(this, "No posts existed!");
             }
         }catch(SQLException err){
             JOptionPane.showMessageDialog(this, err.getMessage());
         }
+        MainPage mainPage = new MainPage(userId); // Display main page if main post do not have any posts
+        mainPage.setVisible(true);
+        return false;
     }
     
     // Load image in database
@@ -368,12 +368,12 @@ public class MainPost extends javax.swing.JFrame {
 
     private void RepliesPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RepliesPostActionPerformed
         ReplyPost replyPost = new ReplyPost(postId); // Do not need to pass userId
-        replyPost.setVisible(true);     
+        replyPost.setVisible(replyPost.getAllPosts()); // setVisible(true) if there is reply post
     }//GEN-LAST:event_RepliesPostActionPerformed
 
     private void ViewOriginalPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ViewOriginalPostActionPerformed
         OriginalPost originalPost = new OriginalPost(replyId); // Do not need to pass userId
-        originalPost.setVisible(true);
+        originalPost.setVisible(originalPost.getAllPosts()); // setVisible(true) if there is original post
     }//GEN-LAST:event_ViewOriginalPostActionPerformed
 
     public static void main(String args[]) {
