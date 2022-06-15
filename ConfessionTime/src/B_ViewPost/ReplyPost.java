@@ -29,6 +29,11 @@ public class ReplyPost extends javax.swing.JFrame {
     public ReplyPost(int replypostId){
         initComponents();
         setLocationRelativeTo(null);
+        PostID.setEditable(false);
+        Date.setEditable(false);
+        Time.setEditable(false);
+        ReplyTo.setEditable(false);
+        Post.setEditable(false);
         this.replypostId = replypostId;
     }
     

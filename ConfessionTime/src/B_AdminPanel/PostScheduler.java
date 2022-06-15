@@ -17,21 +17,20 @@ public class PostScheduler extends Thread{
     private Queue<String> datePosted = new LinkedList<>();
     private Queue<String> timePosted = new LinkedList<>();
     private Queue<String> content = new LinkedList<>();
-    private Queue<java.sql.Blob> image = new LinkedList<>(); 
     
     private Statement stmt;
+    private Statement stmt_2;
     private Integer currentId;
     
     public PostScheduler(Queue<Integer> postId, Queue<Integer> postedById,
             Queue<Integer> replyPostId, Queue<String> datePosted,
-            Queue<String> timePosted, Queue<String> content, Queue<java.sql.Blob> image) {
+            Queue<String> timePosted, Queue<String> content) {
         this.postId = postId;
         this.postedById = postedById;
         this.replyPostId = replyPostId;
         this.datePosted = datePosted;
         this.timePosted = timePosted;
         this.content = content;
-        this.image = image;
     }
 
     @Override
@@ -45,7 +44,7 @@ public class PostScheduler extends Thread{
                         currentId = postId.peek();
                         System.out.println("Popping post #" + currentId + " from queue"); 
                         // Content popped from queue, stored permanantly in database
-                        insertIntoDatabase();
+                        insertIntoDatabase(currentId);
                         deleteRow();
                     }                    
                     
@@ -56,7 +55,7 @@ public class PostScheduler extends Thread{
                         Thread.sleep(1000);
                         currentId = postId.peek();
                         System.out.println("Popping post #" + currentId + " from queue.");                        
-                        insertIntoDatabase();
+                        insertIntoDatabase(currentId);
                         deleteRow();
                     }
 
@@ -67,7 +66,7 @@ public class PostScheduler extends Thread{
                         Thread.sleep(500);
                         currentId = postId.peek();
                         System.out.println("Popping post #" + currentId + " from queue.");
-                        insertIntoDatabase();
+                        insertIntoDatabase(currentId);
                         deleteRow();
                     }
                 }
@@ -78,10 +77,11 @@ public class PostScheduler extends Thread{
         
     }
     
-    public void insertIntoDatabase() {
+    public void insertIntoDatabase(int currentId) {
         
-        String SQL_INSERT = "INSERT INTO POSTS (Id, PostedById, ReplyPostId, DatePosted, TimePosted, Content, Image) VALUES "
-                + "("+postId.poll()+","+postedById.poll()+", "+replyPostId.poll()+", '"+datePosted.poll()+"', '"+timePosted.poll()+"', '"+content.poll()+"', "+image.poll()+")";
+        // Confession data is popped from the data structure
+        String SQL_INSERT = "INSERT INTO POSTS (Id, PostedById, ReplyPostId, DatePosted, TimePosted, Content) VALUES "
+                + "("+postId.poll()+","+postedById.poll()+", "+replyPostId.poll()+", '"+datePosted.poll()+"', '"+timePosted.poll()+"', '"+content.poll()+"')";
 
         try {
             stmt = ConnectDB.conn.createStatement(
@@ -90,11 +90,29 @@ public class PostScheduler extends Thread{
 
             int rows = stmt.executeUpdate(SQL_INSERT);
                             if(rows>0){
+                                updateImage(currentId);
                                 System.out.println("New post has been added into post table");
                             } 
         } catch (SQLException ex) {
             Logger.getLogger(PostScheduler.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void updateImage(int postId){
+        try{
+                
+                String SQL_IMAGE = "UPDATE Posts SET Image=(SELECT Image FROM Pending_Posts WHERE Posts.id=Pending_Posts.id) "
+                        + "WHERE EXISTS (SELECT * FROM Pending_Posts WHERE Posts.id=Pending_Posts.id)";
+                
+                stmt_2 = ConnectDB.conn.createStatement(
+                    ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE);
+                
+                stmt_2.executeUpdate(SQL_IMAGE);
+
+            }catch(SQLException ex){
+                ex.printStackTrace();
+            }
     }
     
     public void deleteRow(){
@@ -106,7 +124,7 @@ public class PostScheduler extends Thread{
 
             int rows = stmt.executeUpdate(SQL_DELETE);
                             if(rows>0){
-                                System.out.println("Post has been deleted from pending_posts table");
+                                System.out.println("Post has been deleted from pending_posts table\n");
                             } 
         } catch (SQLException ex) {
             Logger.getLogger(PostScheduler.class.getName()).log(Level.SEVERE, null, ex);

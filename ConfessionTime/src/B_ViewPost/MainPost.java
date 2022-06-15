@@ -31,6 +31,11 @@ public class MainPost extends javax.swing.JFrame {
     public MainPost(int userId){
         initComponents();
         setLocationRelativeTo(null); 
+        PostID.setEditable(false);
+        Date.setEditable(false);
+        Time.setEditable(false);
+        ReplyTo.setEditable(false);
+        Post.setEditable(false);
         this.userId = userId;
     }
     

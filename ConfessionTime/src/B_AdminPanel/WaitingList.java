@@ -16,7 +16,6 @@ public class WaitingList {
     private Queue<String> datePosted = new LinkedList<>();
     private Queue<String> timePosted = new LinkedList<>();
     private Queue<String> content = new LinkedList<>();
-    private Queue<java.sql.Blob> image = new LinkedList<>(); 
     
     private Statement stmt;
     private ResultSet rs;
@@ -27,7 +26,7 @@ public class WaitingList {
         
         // Waiting time elapsed
         PostScheduler postScheduler 
-                = new PostScheduler(postId, postedById, replyPostId, datePosted, timePosted, content, image);
+                = new PostScheduler(postId, postedById, replyPostId, datePosted, timePosted, content);
         postScheduler.start();
         TimeUnit.SECONDS.sleep(0);
     }
@@ -52,7 +51,6 @@ public class WaitingList {
                datePosted.add(rs.getString("DATEPOSTED"));               
                timePosted.add(rs.getString("TIMEPOSTED"));
                content.add(rs.getString("CONTENT"));
-               image.add(rs.getBlob("IMAGE"));
             }
             
         }catch(SQLException err){

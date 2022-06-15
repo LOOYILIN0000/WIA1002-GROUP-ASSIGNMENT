@@ -162,6 +162,7 @@ public class BatchRemoval extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        dispose();
         int postId = Integer.parseInt(txtPostId.getText());
         DeletePosts deletePost = new DeletePosts(postId);
         deletePost.setVisible(true);

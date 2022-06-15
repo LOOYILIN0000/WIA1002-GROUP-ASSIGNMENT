@@ -97,6 +97,7 @@ public class AdminLogin extends javax.swing.JFrame {
             String password = txtPassword.getText();
             if(password.equals("4Flat")){               
                 JOptionPane.showMessageDialog(null, "You have successfully logged in");
+                dispose();
                 BatchRemoval batchRemoval = new BatchRemoval();
                 batchRemoval.setVisible(true);
             } else {

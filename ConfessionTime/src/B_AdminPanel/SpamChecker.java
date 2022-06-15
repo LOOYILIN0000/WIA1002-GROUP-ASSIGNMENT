@@ -64,15 +64,17 @@ public class SpamChecker {
                 for (int x = 0; x < len1; x++){
                     // Check if there is any matches
                     for (int j = Math.max(0, x - max_dist);
-                         j < Math.min(len2, x + max_dist + 1); j++)
+                         j < Math.min(len2, x + max_dist + 1); j++){
 
                         // If there is a match
+                        
                         if (content.charAt(x) == allPosts.get(i).charAt(j) && hash_allPosts[j] == 0){
                             hash_content[x] = 1;
                             hash_allPosts[j] = 1;
                             match++;
                             break;
                         }
+                    }    
                 }
 
                 // If there is no match
@@ -94,6 +96,7 @@ public class SpamChecker {
                         // in second String
                         while (hash_allPosts[point] == 0)
                             point++;
+                        
 
                         if (content.charAt(i) != allPosts.get(i).charAt(point++) )
                             t++;

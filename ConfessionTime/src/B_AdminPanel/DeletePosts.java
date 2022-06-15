@@ -121,8 +121,8 @@ public class DeletePosts extends javax.swing.JFrame {
                     deletePost(replyPostId);           // delete current reply post 
                     hasNextPost = rs.next();
                 }
-                deletePost(postId);     // delete main post
             }
+            deletePost(postId);     // delete main post
             stmt.close();
         }catch(SQLException e){
             System.out.println(e.getMessage());

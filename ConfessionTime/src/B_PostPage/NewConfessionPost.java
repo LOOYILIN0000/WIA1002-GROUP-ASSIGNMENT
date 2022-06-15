@@ -269,7 +269,7 @@ public class NewConfessionPost extends javax.swing.JFrame {
         if(imageStream != null)
         {
             try{
-                String SQL_IMAGE =  "SELECT * FROM POSTS WHERE Id = "+newPostId+"";
+                String SQL_IMAGE =  "SELECT * FROM PENDING_POSTS WHERE Id = "+newPostId+"";
                 ResultSet imageRS = stmt.executeQuery(SQL_IMAGE);
 
                 //update image blob
